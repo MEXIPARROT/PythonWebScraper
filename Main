@@ -1,0 +1,62 @@
+#4 Python Library installations I tried out to achieve project
+#!pip install webdriver-manager
+#!pip install selenium
+#!pip install bs4
+#!pip install requests
+
+import requests
+from bs4 import BeautifulSoup
+
+# Making a GET request, from inp;o
+r = requests.get('https://www.furinkan.com/ranma/index.html')#https://www.geeksforgeeks.org/python-programming-language/')
+
+# check status code for response received
+# success code - 200
+print("We good, ",r)
+
+# print content of request
+#print(r.content)
+
+#parse HTML received in r
+soup =  BeautifulSoup(r.content, 'html.parser')
+
+#now looks nicely formatted of original r content.
+#print(soup)
+
+s = soup.find('div', class_='entry-content')
+desktopImage = soup.find('div', class_='desktop-image')
+content = soup.find_all('p')
+#print(content)
+print(desktopImage)
+
+#WebDriver part.
+print("----------------------------",end='\n\n\n')
+
+#to hold result list
+element_list = []
+
+for page in range(1, 3, 1):
+
+    page_url = "https://webscraper.io/test-sites/e-commerce/static/computers/laptops?page=" + str(page)
+    storePage = requests.get(page_url)
+    pageSoup = BeautifulSoup(storePage.content, 'html.parser')
+    title = pageSoup.find_all(class_='title')
+    price = pageSoup.find_all(class_='price')
+    description = pageSoup.find_all(class_='description')
+    rating = pageSoup.find_all(class_='ratings')
+    #rating = rating.strip()
+
+    for i in range(len(title)):
+        element_list.append([title[i].text, price[i].text, description[i].text, rating[i].text.strip()])#need to strip rating bc tons of garbage blank spaces
+
+#print(pageSoup)
+print("SUCCESS Parsing. There are", len(element_list),"items in the resulting list")
+#print("----------------------------",end='\n')
+#print(element_list[0]["rating"])
+print(element_list[0][3])#.rating) ###requires dict or custom class to make it easy as element_list[2]["rating"] or element_list[2].rating
+print(type(element_list[0][3]))
+#print("----------------------------",end='\n')
+
+#print(element_list
+for index, item in enumerate(element_list):
+    print(f"{index+1}: \n\tTitle: {item[0]} \n\tPrice: {item[1]} \n\tDescription: {item[2]} \n\tRating: {item[3]}")#{item[3].strip()}\n")
